@@ -1,185 +1,388 @@
-# TugasWeb-Pertemuan11-EcommerceAuth
+# Tugas Web Pertemuan 11 — E-Commerce DB + Secure Auth
 
-## Deskripsi
+## 👤 Identitas
 
-Project Tugas Rutin Pertemuan 11 Pemrograman Web menggunakan Laravel.
-Project ini menerapkan database e-commerce, Eloquent ORM, authentication,
-multi-role, middleware, dan authorization menggunakan Policy.
+- **Nama:** Rahmat Hamonangan Nasution
+- **NIM:** 4253250053
+- **Universitas:** Universitas Negeri Medan
+- **Mata Kuliah:** Pemrograman Web
+- **Pertemuan:** 11
+- **Project:** E-Commerce DB + Secure Auth
 
-## Teknologi
+---
 
-- Laravel 13
-- PHP 8.3
+## 📌 Deskripsi
+
+Tugas Web Pertemuan 11 merupakan implementasi aplikasi Laravel yang menggabungkan pengelolaan database E-Commerce menggunakan Eloquent ORM dengan sistem Authentication dan Security.
+
+Project ini menerapkan migrations, foreign key, seeders, factories, Eloquent relationships, scope, Tinker, Laravel Breeze, multi-role, custom middleware, PostPolicy, dan route protection.
+
+---
+
+## 🎯 Tujuan
+
+Project ini bertujuan untuk memahami dan menerapkan:
+
+- Migrations dan Foreign Key
+- Seeder dan Factory
+- Eloquent ORM
+- Eloquent Relationships
+- Eloquent Scope
+- Tinker
+- Authentication menggunakan Laravel Breeze
+- Register, Login, dan Logout
+- Multi-role
+- Custom Middleware
+- Authorization menggunakan Policy
+- Protected Routes
+
+---
+
+## 🛠️ Teknologi yang Digunakan
+
+- PHP
+- Laravel
 - MySQL
 - Laravel Breeze
 - Blade
-- Vite
+- Composer
+- NPM
+- Laragon
+- Visual Studio Code
 
-## Fitur
+---
 
-### 1. Database E-Commerce
+# 🗄️ Bagian A — Database & Eloquent
 
-Project memiliki 7 tabel utama:
+## 1. Migrations
 
-- users
-- categories
-- products
-- orders
-- order_items
-- tags
-- product_tag
+Project menggunakan migration untuk membuat database E-Commerce yang terdiri dari 7 tabel:
 
-### 2. Seeder dan Factory
+- `users`
+- `categories`
+- `products`
+- `orders`
+- `order_items`
+- `tags`
+- `product_tag`
 
-Data awal dibuat menggunakan Seeder dan Factory.
+Foreign key digunakan untuk menghubungkan tabel-tabel tersebut.
 
-- 5 users
-- 5 categories
-- 8 tags
-- 60 products
-- Data order dan order item
+Relasi database meliputi:
 
-### 3. Eloquent Relationships
+- `products` → `categories`
+- `products` → `users`
+- `order_items` → `orders`
+- `order_items` → `products`
+- `product_tag` → `products`
+- `product_tag` → `tags`
 
-Relasi yang digunakan:
+---
 
-- User → Products
-- User → Orders
-- User → Posts
-- Category → Products
-- Product → Category
-- Product → User
-- Product → Tags
-- Order → Order Items
-- Order Item → Product
-- Tag → Products
+## 2. Seeders dan Factories
 
-### 4. Eloquent Scope
+Project menggunakan Seeder dan Factory untuk menghasilkan data E-Commerce.
 
-Project memiliki scope:
+Factory digunakan untuk menghasilkan **50+ produk realistis** sesuai requirement tugas.
 
-```php
-Product::available()
+Data yang digunakan meliputi:
 
-Scope tersebut digunakan untuk mengambil produk yang memiliki stok lebih dari 0.
+- Users
+- Categories
+- Products
+- Orders
+- Order Items
+- Tags
 
-### 5. Authentication
+---
 
-Authentication menggunakan Laravel Breeze dengan fitur:
+## 3. Model dan Relationships
 
-Register
-Login
-Logout
-Dashboard
-Profile
+Project menggunakan Eloquent Model untuk mengelola data dan relationships.
 
-### 6. Multi-Role
+Relationships yang diterapkan antara lain:
 
-Terdapat tiga role:
+- User memiliki banyak Product
+- User memiliki banyak Order
+- Category memiliki banyak Product
+- Product memiliki satu Category
+- Product memiliki satu User
+- Product memiliki banyak Tag
+- Order memiliki banyak Order Item
+- Order Item memiliki satu Product
+- Tag memiliki banyak Product
 
-Admin
-Editor
-User
+---
 
-Hak akses:
+## 4. Eloquent Scope
 
-Role	Akses
-Admin	Akses admin dan editor serta seluruh data
-Editor	Akses editor dan dapat mengedit/menghapus post
-User	Hanya dapat mengelola post miliknya
+Project menerapkan Eloquent Scope pada model `Product`.
 
-7. Custom Middleware
+Scope yang digunakan:
 
-Middleware RoleMiddleware digunakan untuk membatasi akses berdasarkan role.
+`Product::available()`
+
+Scope digunakan untuk mengambil produk yang tersedia berdasarkan kondisi stok.
 
 Contoh:
 
-/admin
-/editor
+`Product::available()->get()`
 
-8. PostPolicy
+---
 
-PostPolicy digunakan untuk authorization pada:
+## 5. Tinker
 
-Edit post
-Delete post
+Tinker digunakan untuk menguji data, relationships, dan query Eloquent.
 
-Admin dan editor dapat mengelola post, sedangkan user hanya dapat mengelola post miliknya sendiri.
+Lima query yang digunakan untuk dokumentasi adalah:
 
-9. Protected Routes
+1. `Product::count()`
+2. `Product::with('category')->first()`
+3. `User::first()->orders->count()`
+4. `Order::withSum('items as total', 'price')->first()`
+5. `Product::whereRelation('category', 'name', 'Elektronik')->get()`
 
-Route yang membutuhkan authentication dilindungi menggunakan middleware auth.
+---
 
-Route berdasarkan role menggunakan custom middleware role.
+# 🔐 Bagian B — Authentication & Security
 
-10. Eager Loading
+## 6. Laravel Breeze
 
-Eager loading diterapkan menggunakan:
+Project menggunakan Laravel Breeze untuk menyediakan sistem Authentication.
 
-Product::with('category')
+Fitur yang tersedia:
 
-dan:
+- Register
+- Login
+- Logout
 
-Post::with('user')
+---
 
-untuk mengambil relationship secara lebih efisien.
+## 7. Multi-Role
 
-Testing
+Project menerapkan tiga role pengguna:
 
-Testing dilakukan menggunakan dua akun dengan role berbeda.
+- `admin`
+- `editor`
+- `user`
 
-Admin
-Role     : admin
+Setiap role memiliki hak akses yang berbeda sesuai dengan aturan aplikasi.
 
-Admin dapat mengakses:
+---
 
-/admin
-/editor
-Editor
-Role     : editor
+## 8. Custom Middleware
 
-Editor dapat mengakses:
+Project menggunakan custom middleware untuk membatasi akses berdasarkan role pengguna.
 
-/editor
+Middleware melakukan pengecekan role sebelum pengguna dapat mengakses route tertentu.
 
-dan tidak dapat mengakses:
+---
 
-/admin
+## 9. PostPolicy
 
-Akses ke route yang tidak sesuai role menghasilkan:
+Project menggunakan `PostPolicy` untuk mengatur authorization terhadap aksi:
 
-403 Forbidden
-Menjalankan Project
+- Edit post
+- Delete post
 
-Clone repository kemudian masuk ke folder project:
+Policy digunakan untuk menentukan apakah pengguna memiliki hak melakukan aksi terhadap sebuah post berdasarkan role dan kepemilikan data.
 
-cd TugasWeb-Pertemuan11-EcommerceAuth
+---
 
-Install dependency:
+## 10. Route Protection
 
-composer install
-npm install
+Route tertentu dilindungi menggunakan authentication middleware dan custom role middleware.
 
-Salin konfigurasi environment:
+Pengujian dilakukan menggunakan dua role berbeda untuk memastikan pengguna hanya dapat mengakses halaman sesuai dengan hak aksesnya.
 
-copy .env.example .env
+---
 
-Generate application key:
+# 📸 Dokumentasi Tinker
 
-php artisan key:generate
+> **Catatan:** Berdasarkan file Tugas Rutin Pertemuan 11, dokumentasi yang secara eksplisit diwajibkan dalam bentuk screenshot adalah **5 query Tinker**.
 
-Atur database pada file .env, kemudian jalankan:
+## 1. Product Count
 
-php artisan migrate --seed
+Query:
 
-Build frontend:
+`Product::count()`
 
-npm run build
+<img width="706" height="136" alt="image" src="https://github.com/user-attachments/assets/35799c5e-0fcb-47c3-bf91-734b60e68599" />
 
-Jalankan server:
 
-php artisan serve --port=8011
+---
+
+## 2. Product + Category
+
+Query:
+
+`Product::with('category')->first()`
+
+<img width="721" height="304" alt="image" src="https://github.com/user-attachments/assets/39036f90-800c-42b2-beac-f1d483a52998" />
+
+
+---
+
+## 3. User Orders
+
+Query:
+
+`User::first()->orders->count()`
+
+<img width="538" height="73" alt="image" src="https://github.com/user-attachments/assets/bc7a16f9-1618-4848-8452-0e0131b3ea90" />
+
+
+---
+
+## 4. Order Total
+
+Query:
+
+`Order::withSum('items as total', 'price')->first()`
+
+<img width="579" height="185" alt="image" src="https://github.com/user-attachments/assets/c8bd4143-2431-445b-836d-666074ae2b05" />
+
+
+---
+
+## 5. Product berdasarkan Category
+
+Query:
+
+`Product::whereRelation('category', 'name', 'Elektronik')->get()`
+
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/9c7a4c2a-e623-4c20-9a4c-6ecc07919f25" />
+
+
+---
+
+# ⭐ Bonus
+
+## Filament Admin Panel
+
+Filament merupakan fitur bonus yang dapat digunakan untuk menyediakan admin panel.
+
+## Eager Loading
+
+Eager Loading merupakan fitur bonus.
+
+Contoh penerapan:
+
+`Product::with('category')`
+
+Eager Loading digunakan untuk mengambil data relationship secara bersamaan.
+
+---
+
+# 🧩 Struktur Project
+
+    TugasWeb-P11-EcommerceAuth/
+    │
+    ├── app/
+    │   ├── Http/
+    │   │   ├── Controllers/
+    │   │   └── Middleware/
+    │   │
+    │   ├── Models/
+    │   └── Policies/
+    │
+    ├── bootstrap/
+    ├── config/
+    │
+    ├── database/
+    │   ├── factories/
+    │   ├── migrations/
+    │   └── seeders/
+    │
+    ├── public/
+    ├── resources/
+    │   └── views/
+    │
+    ├── routes/
+    │   └── web.php
+    │
+    ├── storage/
+    ├── tests/
+    ├── .env.example
+    ├── artisan
+    ├── composer.json
+    ├── package.json
+    └── README.md
+
+---
+
+# ▶️ Cara Menjalankan Project
+
+### 1. Clone Repository
+
+`git clone https://github.com/rhmtnst/TugasWeb-P11-EcommerceAuth.git`
+
+### 2. Masuk ke Folder Project
+
+`cd TugasWeb-P11-EcommerceAuth`
+
+### 3. Install Dependency Laravel
+
+`composer install`
+
+### 4. Install Dependency Frontend
+
+`npm install`
+
+### 5. Buat File `.env`
+
+`copy .env.example .env`
+
+### 6. Generate Application Key
+
+`php artisan key:generate`
+
+### 7. Konfigurasi Database
+
+Buat database MySQL dengan nama:
+
+`tugasweb_p11`
+
+Kemudian sesuaikan konfigurasi pada `.env`:
+
+`DB_CONNECTION=mysql`
+
+`DB_HOST=127.0.0.1`
+
+`DB_PORT=3306`
+
+`DB_DATABASE=tugasweb_p11`
+
+`DB_USERNAME=root`
+
+`DB_PASSWORD=`
+
+### 8. Jalankan Migration dan Seeder
+
+`php artisan migrate --seed`
+
+### 9. Jalankan Server Laravel
+
+`php artisan serve`
 
 Project dapat diakses melalui:
 
-http://127.0.0.1:8011
+`http://127.0.0.1:8000`
+
+---
+
+# 📚 Kesimpulan
+
+Tugas Web Pertemuan 11 menerapkan konsep Database & Eloquent serta Authentication & Security menggunakan Laravel.
+
+Pada bagian Database & Eloquent, project menggunakan 7 tabel E-Commerce dengan foreign key, Seeder dan Factory untuk menghasilkan 50+ produk realistis, Eloquent Relationships, Eloquent Scope, serta pengujian menggunakan 5 query Tinker.
+
+Pada bagian Authentication & Security, project menggunakan Laravel Breeze, multi-role admin/editor/user, custom middleware, PostPolicy untuk authorization edit/delete, serta route protection dengan pengujian menggunakan dua role.
+
+Project juga mencantumkan Filament dan Eager Loading sebagai fitur bonus.
+
+---
+
+# 🔗 Repository
+
+[GitHub — TugasWeb-P11-EcommerceAuth](https://github.com/rhmtnst/TugasWeb-P11-EcommerceAuth)
